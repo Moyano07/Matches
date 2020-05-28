@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Repository\PlayerRepository;
 use Doctrine\ORM\Mapping as ORM;
+use PascalDeVink\ShortUuid\ShortUuid;
+use Ramsey\Uuid\Uuid;
 
 /**
  * @ORM\Entity(repositoryClass=PlayerRepository::class)
@@ -20,6 +22,11 @@ class Player
     /**
      * @ORM\Column(type="string", length=255)
      */
+    private $uuid;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
     private $name;
 
     /**
@@ -27,6 +34,21 @@ class Player
      * @ORM\JoinColumn(nullable=false)
      */
     private $team;
+
+    private function __construct()
+    {
+
+    }
+
+    public static function create($uuid,$name, Team $team)
+    {
+        $player = new Player();
+        $player->setUuid($uuid);
+        $player->setName($name);
+        $player->setTeam($team);
+
+        return $player;
+    }
 
     public function getId(): ?int
     {
@@ -56,4 +78,22 @@ class Player
 
         return $this;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getUuid()
+    {
+        return $this->uuid;
+    }
+
+    /**
+     * @param mixed $uuid
+     */
+    public function setUuid($uuid)
+    {
+        $this->uuid = $uuid;
+    }
+
+
 }

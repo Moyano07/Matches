@@ -19,6 +19,11 @@ class CardRepository extends ServiceEntityRepository
         parent::__construct($registry, Card::class);
     }
 
+    public function persist($entity)
+    {
+        $this->getEntityManager()->persist($entity);
+    }
+
     // /**
     //  * @return Card[] Returns an array of Card objects
     //  */

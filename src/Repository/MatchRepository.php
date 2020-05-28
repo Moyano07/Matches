@@ -19,6 +19,11 @@ class MatchRepository extends ServiceEntityRepository
         parent::__construct($registry, Match::class);
     }
 
+
+    public function persist($entity)
+    {
+        $this->getEntityManager()->persist($entity);
+    }
     // /**
     //  * @return Match[] Returns an array of Match objects
     //  */

@@ -6,6 +6,8 @@
         "ext-ctype": "*",
         "ext-iconv": "*",
         "jms/serializer-bundle": "^3.6",
+        "pascaldevink/shortuuid": "^2.3",
+        "ramsey/uuid-doctrine": "^1.6",
         "symfony/console": "5.0.*",
         "symfony/dotenv": "5.0.*",
         "symfony/flex": "^1.3.1",

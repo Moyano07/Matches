@@ -19,6 +19,11 @@ class GolRepository extends ServiceEntityRepository
         parent::__construct($registry, Gol::class);
     }
 
+
+    public function persist($entity)
+    {
+        $this->getEntityManager()->persist($entity);
+    }
     // /**
     //  * @return Gol[] Returns an array of Gol objects
     //  */

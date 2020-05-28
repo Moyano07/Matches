@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Shared\EventSubscriber;
+namespace App\EventSubscriber;
 
 use JMS\Serializer\SerializationContext;
 use JMS\Serializer\SerializerInterface;

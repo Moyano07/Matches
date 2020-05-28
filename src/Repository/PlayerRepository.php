@@ -19,6 +19,11 @@ class PlayerRepository extends ServiceEntityRepository
         parent::__construct($registry, Player::class);
     }
 
+    public function persist($entity)
+    {
+        $this->getEntityManager()->persist($entity);
+    }
+
     // /**
     //  * @return Player[] Returns an array of Player objects
     //  */
