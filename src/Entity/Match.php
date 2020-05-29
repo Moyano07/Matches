@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\MatchRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use PascalDeVink\ShortUuid\ShortUuid;
 use Ramsey\Uuid\Uuid;
@@ -26,7 +28,7 @@ class Match
     private $uuid;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255,nullable=true)
      */
     private $location;
 
@@ -46,7 +48,7 @@ class Match
     private $startDate;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="string")
      */
     private $startTime;
 
@@ -55,19 +57,41 @@ class Match
      */
     private $result;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=Player::class)
+     */
+    private $participating;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Gol::class, mappedBy="matchs")
+     */
+    private $Goals;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Card::class, mappedBy="matchs")
+     */
+    private $cards;
+
+
     private function __construct()
     {
-        $this->setUuid((new ShortUuid())->encode(Uuid::uuid1()));
+
+
+        $this->participating = new ArrayCollection();
+        $this->Goals = new ArrayCollection();
+        $this->cards = new ArrayCollection();
 
     }
 
-    public static function create($local,$visitor,$startDate,$startTime){
+    public static function create($uuid,$local,$visitor,$startDate,$startTime,$location){
 
         $match = new Match();
+        $match->setUuid($uuid);
         $match->setLocal($local);
         $match->setVisiting($visitor);
         $match->setStartDate($startDate);
         $match->setStartTime($startTime);
+        $match->setLocation($location);
 
         return $match;
     }
@@ -130,7 +154,7 @@ class Match
         return $this->startTime;
     }
 
-    public function setStartTime(\DateTimeInterface $startTime)
+    public function setStartTime($startTime)
     {
         $this->startTime = $startTime;
 
@@ -163,6 +187,99 @@ class Match
     public function setLocation($location)
     {
         $this->location = $location;
+    }
+
+    /**
+     * @return Collection|Player[]
+     */
+    public function getParticipating(): Collection
+    {
+        return $this->participating;
+    }
+
+    public function addParticipating(Player $participating): self
+    {
+        if (!$this->participating->contains($participating)) {
+            $this->participating[] = $participating;
+        }
+
+        return $this;
+    }
+
+    public function removeParticipating(Player $participating): self
+    {
+        if ($this->participating->contains($participating)) {
+            $this->participating->removeElement($participating);
+        }
+
+        return $this;
+    }
+
+    public function updatePlayers($participants)
+    {
+
+    }
+
+    /**
+     * @return Collection|Gol[]
+     */
+    public function getGoals(): Collection
+    {
+        return $this->Goals;
+    }
+
+    public function addGoal(Gol $goal): self
+    {
+        if (!$this->Goals->contains($goal)) {
+            $this->Goals[] = $goal;
+            $goal->setMatchs($this);
+        }
+
+        return $this;
+    }
+
+    public function removeGoal(Gol $goal): self
+    {
+        if ($this->Goals->contains($goal)) {
+            $this->Goals->removeElement($goal);
+            // set the owning side to null (unless already changed)
+            if ($goal->getMatchs() === $this) {
+                $goal->setMatchs(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Card[]
+     */
+    public function getCards(): Collection
+    {
+        return $this->cards;
+    }
+
+    public function addCard(Card $card): self
+    {
+        if (!$this->cards->contains($card)) {
+            $this->cards[] = $card;
+            $card->setMatchs($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCard(Card $card): self
+    {
+        if ($this->cards->contains($card)) {
+            $this->cards->removeElement($card);
+            // set the owning side to null (unless already changed)
+            if ($card->getMatchs() === $this) {
+                $card->setMatchs(null);
+            }
+        }
+
+        return $this;
     }
 
 

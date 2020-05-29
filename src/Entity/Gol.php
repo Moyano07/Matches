@@ -28,21 +28,41 @@ class Gol
      */
     private $player;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Match::class)
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $matchs;
+
 
     /**
      * @ORM\Column(type="string", length=255)
      */
     private $minute;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Match::class, inversedBy="Goals")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $matchs;
+
+
+    private function __construct()
+    {
+    }
+
+    public static function create($uuid,$player,$minute,$match)
+    {
+        $gol = new Gol();
+        $gol->setUuid($uuid);
+        $gol->setPlayer($player);
+        $gol->setMatchs($match);
+        $gol->setMinute($minute);
+
+        return $gol;
+
+    }
+
     public function getId(): ?int
     {
         return $this->id;
     }
+
 
     public function getUuid(): ?string
     {
@@ -68,17 +88,7 @@ class Gol
         return $this;
     }
 
-    public function getMatchs(): ?Match
-    {
-        return $this->matchs;
-    }
 
-    public function setMatchs(?Match $matchs): self
-    {
-        $this->matchs = $matchs;
-
-        return $this;
-    }
 
     public function getMinute(): ?string
     {
@@ -88,6 +98,18 @@ class Gol
     public function setMinute(string $minute): self
     {
         $this->minute = $minute;
+
+        return $this;
+    }
+
+    public function getMatchs(): ?Match
+    {
+        return $this->matchs;
+    }
+
+    public function setMatchs(?Match $matchs): self
+    {
+        $this->matchs = $matchs;
 
         return $this;
     }

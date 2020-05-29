@@ -18,16 +18,16 @@ class Card
     private $id;
 
     /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $uuid;
+
+    /**
      * @ORM\ManyToOne(targetEntity=Player::class)
      * @ORM\JoinColumn(nullable=false)
      */
     private $player;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Match::class)
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $matchs;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -38,6 +38,28 @@ class Card
      * @ORM\Column(type="string", length=255)
      */
     private $type;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Match::class, inversedBy="cards")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $matchs;
+
+    private function __construct()
+    {
+    }
+
+    public static function create($uuid, $player, Match $match, $minute,$type)
+    {
+        $card = new Card();
+        $card->setUuid($uuid);
+        $card->setPlayer($player);
+        $card->setMatchs($match);
+        $card->setMinute($minute);
+        $card->setType($type);
+
+        return $card;
+    }
 
     public function getId(): ?int
     {
@@ -56,17 +78,6 @@ class Card
         return $this;
     }
 
-    public function getMatchs(): ?Match
-    {
-        return $this->matchs;
-    }
-
-    public function setMatchs(?Match $matchs): self
-    {
-        $this->matchs = $matchs;
-
-        return $this;
-    }
 
     public function getMinute(): ?string
     {
@@ -91,4 +102,34 @@ class Card
 
         return $this;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getUuid()
+    {
+        return $this->uuid;
+    }
+
+    /**
+     * @param mixed $uuid
+     */
+    public function setUuid($uuid): void
+    {
+        $this->uuid = $uuid;
+    }
+
+    public function getMatchs(): ?Match
+    {
+        return $this->matchs;
+    }
+
+    public function setMatchs(?Match $matchs): self
+    {
+        $this->matchs = $matchs;
+
+        return $this;
+    }
+
+
 }

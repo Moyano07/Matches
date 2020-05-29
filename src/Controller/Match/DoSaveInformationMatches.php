@@ -49,23 +49,25 @@ class DoSaveInformationMatches
          * en nuestra base de datos con esos mismo uuids.
          */
 
-        $matches = json_decode($request->get('data'),true);
+        $matches = json_decode($request->get('matches'),true);
 
-        dump($request->get('data'));die;
 
 
         foreach ($matches as $match) {
 
             /** @var  $local Team */
-            $local = $this->matchRepository->findOneBy(['uuid' => $match['localUuid']]);
+            $local = $this->teamRepository->findOneBy(['uuid' => $match['localUuid']]);
             if (!$local) {
                 throw new InvalidArgumentException('localUuid not found');
             }
+
             /** @var  $visitor Team */
-            $visitor = $this->matchRepository->findOneBy(['uuid' => $match['visitorUuid']]);
+            $visitor = $this->teamRepository->findOneBy(['uuid' => $match['visitorUuid']]);
             if (!$visitor) {
                 throw new InvalidArgumentException('visitorUuid not found');
             }
+
+
 
             //En esta parte del codigo compruebo si algunio de los 2 equipos es
             // el equipo del que nos interesa la informacion (DEL EQUIPO AL QUE PERTENECE LA WEB) y si
@@ -78,18 +80,21 @@ class DoSaveInformationMatches
                 continue;
             }
 
-            $match = Match::create(
+
+            //En el caso de las fechas habitualmente yo uso Datetime, por eso lo uso aqui.
+            $newMatch = Match::create(
+                $match['uuid'],
                 $local,
                 $visitor,
-                new \DateTime($request->get('starDate')),
-                new \DateTime($request->get('starTime'))
+                new \DateTime($match['date']),
+                (new \DateTime($match['date']))->format('H:i'),
+                $match['location']
             );
 
-            $result = $match['result'];
-            if ($result) {
-                $match->setResult($result);
+            if (in_array('result',$match)) {
+                $newMatch->setResult($match['result']);
             }
-            $this->matchRepository->persist($match);
+            $this->matchRepository->persist($newMatch);
         }
 
 
